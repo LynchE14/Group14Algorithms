@@ -1,46 +1,177 @@
-import java.awt.*;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import javax.swing.*;
-
 public class TestingEnergy {
+
+    static String energyFilePath = "energyreadings.csv";
+    static File outputFile = new File("outputFile.csv");
+
     public static void main(String[] args) throws Exception {
-        String logFilePath = "C:/Users/eoinl/Downloads/energyReadings.csv";
+        File[] files = makeFileArray("CSVFILES/BubbleSort/BestCase");
+        int [] intArray = csvToIntArray(files[0], 25000);
+        int [][] runs = copyToRunsArray(intArray, 400);
+        BubbleSortArrays(runs, "BubbleSortBestCase25000");
+    }
 
-        // Define input sizes to test
-        int[] inputSizes = {10000000, 20000000, 30000000, 40000000, 50000000};
-        List<Double> energyResults = new ArrayList<>();
+    // returns array of files to be iterated through and sorted
+    public static File[] makeFileArray(String folderPath) {
+        File folder = new File(folderPath);
 
-        // Run algorithm with different input sizes and measure energy
-        for (int n : inputSizes) {
+        // Check if the folder exists and is a directory
+        if (folder.exists() && folder.isDirectory()) {
+            // return file array
+            return folder.listFiles((dir, name) -> name.endsWith(".csv"));
+        } else {
+            System.out.println("Folder not found!");
+            return null;
+        }
+    }
+
+    public static int[] csvToIntArray(File file, int size) {
+        int[] numbers = new int[size];
+        int index = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(",");
+                for (String value : values) {
+                    if (index < size) {
+                        numbers[index] = Integer.parseInt(value.trim());
+                        index++;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Optional: check if fewer numbers were read than expected
+        if (index < size) {
+            throw new IllegalArgumentException("CSV file contains fewer numbers than expected size.");
+        }
+
+        return numbers;
+    }
+
+    // creates array of deep copies of array to be sorted
+    public static int[][] copyToRunsArray(int[] array, int n) {
+        // array of n arrays
+        int[][] runs = new int[n][array.length];
+
+        // copy over
+        for (int[] run : runs) {
+            System.arraycopy(array, 0, run, 0, array.length);
+        }
+
+        return runs;
+    }
+
+    // write data for each sort to csv file
+    public static void outputData(double timeTaken, double energyConsumed, String nameOfRun, File file) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
+            // Format: timeTaken,energyConsumed,nameOfRun
+            writer.write(timeTaken + "," + energyConsumed + "," + nameOfRun);
+            writer.newLine(); // Move to the next line
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void BubbleSortArrays(int[][] arrays, String run) throws IOException, InterruptedException {
+        // create instance of sort class
+        BubbleSort b = new BubbleSort();
+        // iterate through arrays
+        int i = 0;
+        for (int[] array : arrays) {
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
-            System.out.println("Starting algorithm with size " + n + " at " + startTimeStr);
-
-            // Run algorithm with the current input size
-            runMyAlgorithm(n);
-
+            // sort
+            b.bubbleSort(array);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Finished algorithm at " + endTimeStr);
+            System.out.println("Array sorted for : " + run);
 
-            double energyConsumed = estimateEnergy(logFilePath, startTimeStr, endTimeStr);
-            energyResults.add(energyConsumed);
-            System.out.printf("Input size %d: Estimated energy used: %.2f Joules%n", n, energyConsumed);
+            // calculate energy consumed
+            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
+            // output data to output csv file
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run + " - " + i, outputFile);
+            i++;
+            // Add a delay between tests to ensure distinct time ranges
+            Thread.sleep(75);
+        }
+    }
+
+    public static void MergeSortArrays(int[][] arrays, String run) throws IOException, InterruptedException {
+        // create instance of sort class
+        MergeSort m = new MergeSort();
+        // iterate through arrays
+        for (int[] array : arrays) {
+            // Format the current time as HH:mm:ss.SSS to match CSV format
+            String startTimeStr = getCurrentTimeFormatted();
+            // sort
+            m.mergeSort(array);
+            // Record end time in same format
+            String endTimeStr = getCurrentTimeFormatted();
+            System.out.println("Array sorted: " + run);
+
+            // calculate energy consumed
+            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
+            // output data to output csv file
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run, outputFile);
 
             // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(1000);
+            Thread.sleep(500);
+        }
+    }
+
+    public static void QuickSortArrays(int[][] arrays, String run) throws IOException, InterruptedException {
+        // create instance of sort class
+        QuickSort q = new QuickSort();
+        // iterate through arrays
+        for (int[] array : arrays) {
+            // Format the current time as HH:mm:ss.SSS to match CSV format
+            String startTimeStr = getCurrentTimeFormatted();
+            // sort
+            q.quickSort(array, 0, array.length - 1);
+            // Record end time in same format
+            String endTimeStr = getCurrentTimeFormatted();
+            System.out.println("Array sorted: " + run);
+
+            // calculate energy consumed
+            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
+            // output data to output csv file
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run, outputFile);
+
+            // Add a delay between tests to ensure distinct time ranges
+            Thread.sleep(500);
+        }
+    }
+
+    public static void CountingSortArrays(int[][] arrays, String run, int k) throws IOException, InterruptedException {
+        // create instance of sort class
+        CountingSort c = new CountingSort();
+        // iterate through arrays
+        for (int[] array : arrays) {
+            // Format the current time as HH:mm:ss.SSS to match CSV format
+            String startTimeStr = getCurrentTimeFormatted();
+            // sort
+            c.CountingSort(array, k);
+            // Record end time in same format
+            String endTimeStr = getCurrentTimeFormatted();
+            System.out.println("Array sorted: " + run);
+
+            // calculate energy consumed
+            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
+            // output data to output csv file
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run, outputFile);
+
+            // Add a delay between tests to ensure distinct time ranges
+            Thread.sleep(500);
         }
     }
 
@@ -48,24 +179,6 @@ public class TestingEnergy {
     private static String getCurrentTimeFormatted() {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
         return sdf.format(new Date());
-    }
-
-    public static void runMyAlgorithm(int n) {
-        // Simulate some work - but don't flood console with output
-        long sum = 0;
-        for (int i = 0; i < n; i++) {
-            sum += i;
-            for (int j = 0; j < 1000; j++) {
-                // Simulate some computation
-                sum += j;
-            }
-
-            // Only print occasionally to avoid console flooding
-            if (i % 10000 == 0) {
-                System.out.println("Progress: " + i + "/" + n);
-            }
-        }
-        System.out.println("Algorithm completed. Sum: " + sum);
     }
 
     public static List<String[]> parseCsvWithQuotes(String filePath) {
@@ -91,12 +204,10 @@ public class TestingEnergy {
 
     // Modified to take time strings instead of milliseconds
     public static double estimateEnergy(String csvPath, String startTimeStr, String endTimeStr) throws IOException {
-        // Basic sanity checks before we do anything else
+        // null checks
         if (csvPath == null || csvPath.isEmpty()) {
             throw new IllegalArgumentException("CSV path cannot be null or empty");
         }
-
-        System.out.println("Analyzing energy between " + startTimeStr + " and " + endTimeStr);
 
         // Convert input times to milliseconds since midnight for comparison
         long startMillis = timeStrToMillisSinceMidnight(startTimeStr);
@@ -112,11 +223,6 @@ public class TestingEnergy {
         if (rows.isEmpty()) {
             throw new IOException("CSV file is empty");
         }
-
-        System.out.println("Read " + rows.size() + " lines from CSV file");
-
-        // Find the columns we care about from the header row
-        System.out.println("Raw headers: " + rows.get(0));
 
         int timeIndex = 1;
         int powerIndex = 2;
@@ -163,7 +269,6 @@ public class TestingEnergy {
                     // Special handling for the first point we encounter within our range
                     if (!foundFirstPointInRange) {
                         foundFirstPointInRange = true;
-                        System.out.println("Found first point in range: " + timeStr + " with power " + power + "W");
 
                         // If we have a point before the range, we can interpolate exactly at the start boundary
                         if (prevTimestamp != -1 && prevTimestamp < startMillis) {
@@ -174,7 +279,6 @@ public class TestingEnergy {
                             // Use this interpolated value as our starting point
                             prevTimestamp = startMillis;
                             prevPower = interpolatedPower;
-                            System.out.println("Interpolated power at start time: " + interpolatedPower + "W");
                         } else {
                             // No previous point to interpolate with, just use this one
                             prevTimestamp = timestamp;
@@ -187,8 +291,6 @@ public class TestingEnergy {
                             // Energy = Power × Time (constant power approximation)
                             double energySegment = prevPower * deltaTimeSec;
                             totalEnergy += energySegment;
-                            System.out.println("Adding energy segment: " + energySegment +
-                                    "J (power: " + prevPower + "W, time: " + deltaTimeSec + "s)");
                             prevTimestamp = timestamp;
                             prevPower = power;
                         } else {
@@ -209,22 +311,16 @@ public class TestingEnergy {
                             double deltaTimeSec = (endMillis - prevTimestamp) / 1000.0;
                             double energySegment = prevPower * deltaTimeSec;
                             totalEnergy += energySegment;
-                            System.out.println("Adding final energy segment to boundary: " + energySegment +
-                                    "J (power: " + prevPower + "W, time: " + deltaTimeSec + "s)");
                         } catch (NumberFormatException e) {
                             System.err.println("Invalid power value at line " + i + ": " + rows.get(i)[powerIndex]);
                         }
                     }
-                    System.out.println("Reached point after time range, stopping processing");
                     break; // No need to process more data beyond our range
                 }
             } catch (Exception e) {
                 System.err.println("Error processing line " + i + ": " + e.getMessage());
             }
         }
-
-        System.out.println("Found " + pointsInRange + " data points in the specified time range");
-        System.out.println("Total energy calculated: " + totalEnergy + " Joules");
         return totalEnergy; // in Joules
     }
 
