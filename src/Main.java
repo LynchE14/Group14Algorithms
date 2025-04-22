@@ -1,31 +1,47 @@
 import java.util.Arrays;
-//import com.opencsv.CSVReader;
-//import java.io.FileReader;
-//import java.io.IOException;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
 
 public class Main {
 
-
-
     public static void main(String[] args) {
-        BubbleSort bubble = new BubbleSort();
-        CountingSort counting = new CountingSort();
-        MergeSort merge = new MergeSort();
-        QuickSort quick = new QuickSort();
+        // Assuming CSV contains a single line of comma-separated integers
+        String csvFile = "csv/data.csv";
 
-        int[] bubbleArray = {5, 60, 347, 1, 53, 22, 95, 44};
-        int[] countingArray = {6, 3, 7, 1, 5, 9, 4, 8};
-        int[] mergeArray = {5, 60, 347, 1, 53, 22, 95, 44};
-        int[] quickArray = {6, 3, 0, 1, 5, 9, 4, 7};
+        try (CSVReader reader = new CSVReader(new FileReader(csvFile))) {
+            List<String[]> lines = reader.readAll();
 
-        bubble.bubbleSort(bubbleArray);
-        counting.CountingSort(countingArray, 9);
-        merge.mergeSort(mergeArray);
-        quick.quickSort(quickArray, 0, quickArray.length-1);
+            if (!lines.isEmpty()) {
+                String[] firstLine = lines.get(0);
+                int[] dataArray = new int[firstLine.length];
 
-        System.out.println(Arrays.toString(quickArray));
-        System.out.println(Arrays.toString(bubbleArray));
-        System.out.println(Arrays.toString(countingArray));
-        System.out.println(Arrays.toString(mergeArray));
+                for (int i = 0; i < firstLine.length; i++) {
+                    dataArray[i] = Integer.parseInt(firstLine[i]);
+                }
+
+                System.out.println(Arrays.toString(dataArray));
+
+                // You can now use dataArray with your sorting classes
+                BubbleSort bubble = new BubbleSort();
+                CountingSort counting = new CountingSort();
+                MergeSort merge = new MergeSort();
+                QuickSort quick = new QuickSort();
+
+                bubble.bubbleSort(dataArray); // Cloning to preserve original
+                counting.CountingSort(dataArray.clone(), 9);
+                merge.mergeSort(dataArray.clone());
+                quick.quickSort(dataArray.clone(), 0, dataArray.length - 1);
+
+                System.out.println(Arrays.toString(dataArray));
+            } else {
+                System.out.println("CSV file is empty or not found.");
+            }
+        } catch (IOException | CsvException e) {
+            e.printStackTrace();
+        }
     }
 }
