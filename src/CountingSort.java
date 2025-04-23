@@ -26,6 +26,6 @@ public class CountingSort {
         }
 
         // Copying the sorted values back into the original array
-        System.arraycopy(output, 0, input, 0, k);
+        System.arraycopy(output, 0, input, 0, input.length);
     }
 }
