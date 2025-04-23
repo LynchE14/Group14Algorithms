@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -10,13 +11,66 @@ public class TestingEnergy {
     static File outputFile = new File("outputFile.csv");
 
     public static void main(String[] args) throws Exception {
-        File[] files = makeFileArray("CSVFILES/BubbleSort/BestCase");
-        int [] intArray = csvToIntArray(files[0], 25000);
-        int [][] runs = copyToRunsArray(intArray, 400);
-        BubbleSortArrays(runs, "BubbleSortBestCase25000");
+        int[][] BsBCRuns = makeRunSuite("CSVFILES/BubbleSort/BestCase");
+        for (int i = 0; i < BsBCRuns.length; i++) {
+            BubbleSortArrays(BsBCRuns[i], 50, "BubbleSortBestCase");
+        }
+        int[][] BsWCRuns = makeRunSuite("CSVFILES/BubbleSort/WorstCase");
+        for (int i = 0; i < BsWCRuns.length; i++) {
+            BubbleSortArrays(BsWCRuns[i], 50, "BubbleSortWorstCase");
+        }
+        int[][] BsRCRuns = makeRunSuite("CSVFILES/BubbleSort/Random");
+        for (int i = 0; i < BsRCRuns.length; i++) {
+            BubbleSortArrays(BsRCRuns[i], 5, "BubbleSortRandomCase");
+        }
+
+        int[][] MsBCRuns = makeRunSuite("CSVFILES/MergeSort/BestCase");
+        for (int i = 0; i < MsBCRuns.length; i++) {
+            MergeSortArrays(MsBCRuns[i], 5, "MergeSortBestCase");
+        }
+        int[][] MsWCRuns = makeRunSuite("CSVFILES/MergeSort/WorstCase");
+        for (int i = 0; i < MsWCRuns.length; i++) {
+            MergeSortArrays(MsWCRuns[i], 5, "MergeSortWorstCase");
+        }
+        int[][] MsRCRuns = makeRunSuite("CSVFILES/MergeSort/Random");
+        for (int i = 0; i < MsRCRuns.length; i++) {
+            MergeSortArrays(MsRCRuns[i], 3, "MergeSortRandomCase");
+        }
+
+        int[][] CsBCRuns = makeRunSuite("CSVFILES/CountingSort/BestCase");
+        for (int i = 0; i < CsBCRuns.length; i++) {
+            CountingSortArrays(CsBCRuns[i], 5, "CountingSortBestCase", 10);
+        }
+        int[][] CsWCRuns = makeRunSuite("CSVFILES/CountingSort/WorstCase");
+        for (int i = 0; i < CsWCRuns.length; i++) {
+            CountingSortArrays(CsWCRuns[i], 5, "CountingSortWorstCase", 10000000);
+        }
+
+        int[][] QsBCRuns = makeRunSuite("CSVFILES/QuickSort/BestCase");
+        for (int i = 0; i < QsBCRuns.length; i++) {
+            QuickSortArrays(QsBCRuns[i], 5, "QuickSortBestCase");
+        }
+        int[][] QsWCRuns = makeRunSuite("CSVFILES/QuickSort/WorstCase");
+        for (int i = 0; i < QsWCRuns.length; i++) {
+            QuickSortArrays(QsWCRuns[i], 5, "QuickSortWorstCase");
+        }
+        int[][] QsRCRuns = makeRunSuite("CSVFILES/QuickSort/Random");
+        for (int i = 0; i < QsRCRuns.length; i++) {
+            QuickSortArrays(QsRCRuns[i], 3, "QuickSortRandomCase");
+        }
     }
 
-    // returns array of files to be iterated through and sorted
+    public static int[][] makeRunSuite(String folderPath){
+        File[] files = makeFileArray(folderPath);
+        int [][] intArrays = new int[files.length][];
+        for (int i = 0; i < files.length; i++) {
+            intArrays[i] = csvToIntArray(files[i]);
+        }
+
+        return intArrays;
+    }
+
+    // returns array of files to be iterated through
     public static File[] makeFileArray(String folderPath) {
         File folder = new File(folderPath);
 
@@ -30,148 +84,129 @@ public class TestingEnergy {
         }
     }
 
-    public static int[] csvToIntArray(File file, int size) {
-        int[] numbers = new int[size];
-        int index = 0;
+    public static int[] csvToIntArray(File file) {
+        List<Integer> numbersList = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(",");
-                for (String value : values) {
-                    if (index < size) {
-                        numbers[index] = Integer.parseInt(value.trim());
-                        index++;
-                    }
-                }
-            }
+            br.lines()
+                    .flatMap(line -> Arrays.stream(line.split(",")))
+                    .map(String::trim)
+                    .mapToInt(Integer::parseInt)
+                    .forEach(numbersList::add);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Optional: check if fewer numbers were read than expected
-        if (index < size) {
-            throw new IllegalArgumentException("CSV file contains fewer numbers than expected size.");
-        }
-
-        return numbers;
-    }
-
-    // creates array of deep copies of array to be sorted
-    public static int[][] copyToRunsArray(int[] array, int n) {
-        // array of n arrays
-        int[][] runs = new int[n][array.length];
-
-        // copy over
-        for (int[] run : runs) {
-            System.arraycopy(array, 0, run, 0, array.length);
-        }
-
-        return runs;
+        return numbersList.stream().mapToInt(Integer::intValue).toArray();
     }
 
     // write data for each sort to csv file
-    public static void outputData(double timeTaken, double energyConsumed, String nameOfRun, File file) {
+    public static void outputData(double timeTaken, double energyConsumed,int size, String nameOfRun, File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             // Format: timeTaken,energyConsumed,nameOfRun
-            writer.write(timeTaken + "," + energyConsumed + "," + nameOfRun);
+            writer.write(timeTaken + "," + energyConsumed + "," + size + "," + nameOfRun);
             writer.newLine(); // Move to the next line
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void BubbleSortArrays(int[][] arrays, String run) throws IOException, InterruptedException {
+    public static void BubbleSortArrays(int[] array, int runs, String run) throws IOException, InterruptedException {
         // create instance of sort class
         BubbleSort b = new BubbleSort();
         // iterate through arrays
-        int i = 0;
-        for (int[] array : arrays) {
+        for (int i = 0; i < runs; i++) {
+            int[] arrayToBeSorted = new int[array.length];
+            System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
             b.bubbleSort(array);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array sorted for : " + run);
+            System.out.println("Array [" + i + "] sorted for size: " + arrayToBeSorted.length);
 
             // calculate energy consumed
             double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
             // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run + " - " + i, outputFile);
-            i++;
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
             // Add a delay between tests to ensure distinct time ranges
             Thread.sleep(75);
         }
     }
 
-    public static void MergeSortArrays(int[][] arrays, String run) throws IOException, InterruptedException {
+    public static void MergeSortArrays(int[] array, int runs, String run) throws IOException, InterruptedException {
         // create instance of sort class
         MergeSort m = new MergeSort();
         // iterate through arrays
-        for (int[] array : arrays) {
+        for (int i = 0; i < runs; i++) {
+            int[] arrayToBeSorted = new int[array.length];
+            System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
             m.mergeSort(array);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array sorted: " + run);
+            System.out.println("Array [" + i + "] sorted: " + run);
 
             // calculate energy consumed
             double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
             // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run, outputFile);
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
 
             // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(500);
+            Thread.sleep(75);
         }
     }
 
-    public static void QuickSortArrays(int[][] arrays, String run) throws IOException, InterruptedException {
+    public static void QuickSortArrays(int[] array, int runs, String run) throws IOException, InterruptedException {
         // create instance of sort class
         QuickSort q = new QuickSort();
         // iterate through arrays
-        for (int[] array : arrays) {
+        for (int i = 0; i < runs; i++) {
+            int[] arrayToBeSorted = new int[array.length];
+            System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
             q.quickSort(array, 0, array.length - 1);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array sorted: " + run);
+            System.out.println("Array [" + i + "] sorted: " + run);
 
             // calculate energy consumed
             double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
             // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run, outputFile);
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
 
             // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(500);
+            Thread.sleep(75);
         }
     }
 
-    public static void CountingSortArrays(int[][] arrays, String run, int k) throws IOException, InterruptedException {
+    public static void CountingSortArrays(int[] array, int runs, String run, int k) throws IOException, InterruptedException {
         // create instance of sort class
         CountingSort c = new CountingSort();
         // iterate through arrays
-        for (int[] array : arrays) {
+        for (int i = 0; i < runs; i++) {
+            int[] arrayToBeSorted = new int[array.length];
+            System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
             c.CountingSort(array, k);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array sorted: " + run);
+            System.out.println("Array [" + i + "] sorted: " + run);
 
             // calculate energy consumed
             double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
             // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, run, outputFile);
+            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
 
             // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(500);
+            Thread.sleep(75);
         }
     }
 
