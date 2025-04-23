@@ -121,7 +121,7 @@ public class TestingEnergy {
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
-            b.bubbleSort(array);
+            b.bubbleSort(arrayToBeSorted);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
             System.out.println("Array [" + i + "] sorted for size: " + arrayToBeSorted.length);
@@ -145,7 +145,7 @@ public class TestingEnergy {
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
-            m.mergeSort(array);
+            m.mergeSort(arrayToBeSorted);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
             System.out.println("Array [" + i + "] sorted: " + run);
@@ -170,7 +170,7 @@ public class TestingEnergy {
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
-            q.quickSort(array, 0, array.length - 1);
+            q.quickSort(arrayToBeSorted, 0, array.length - 1);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
             System.out.println("Array [" + i + "] sorted: " + run);
@@ -195,7 +195,7 @@ public class TestingEnergy {
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
-            c.CountingSort(array, k);
+            c.CountingSort(arrayToBeSorted, k);
             // Record end time in same format
             String endTimeStr = getCurrentTimeFormatted();
             System.out.println("Array [" + i + "] sorted: " + run);
