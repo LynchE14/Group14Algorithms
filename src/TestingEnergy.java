@@ -11,7 +11,31 @@ public class TestingEnergy {
     static File outputFile = new File("outputFile.csv");
 
     public static void main(String[] args) throws Exception {
+        int[][] BsBCRuns = makeRunSuite("CSVFILES/BubbleSort/BestCase");
+        for (int i = 0; i < BsBCRuns.length; i++) {
+            BubbleSortArrays(BsBCRuns[i], 50, "BubbleSortBestCase");
+        }
+        int[][] BsWCRuns = makeRunSuite("CSVFILES/BubbleSort/WorstCase");
+        for (int i = 0; i < BsWCRuns.length; i++) {
+            BubbleSortArrays(BsWCRuns[i], 50, "BubbleSortWorstCase");
+        }
+        int[][] BsRCRuns = makeRunSuite("CSVFILES/BubbleSort/Random");
+        for (int i = 0; i < BsRCRuns.length; i++) {
+            BubbleSortArrays(BsRCRuns[i], 5, "BubbleSortRandomCase");
+        }
 
+        int[][] MsBCRuns = makeRunSuite("CSVFILES/MergeSort/BestCase");
+        for (int i = 0; i < MsBCRuns.length; i++) {
+            MergeSortArrays(MsBCRuns[i], 5, "MergeSortBestCase");
+        }
+        int[][] MsWCRuns = makeRunSuite("CSVFILES/MergeSort/WorstCase");
+        for (int i = 0; i < MsWCRuns.length; i++) {
+            MergeSortArrays(MsWCRuns[i], 5, "MergeSortWorstCase");
+        }
+        int[][] MsRCRuns = makeRunSuite("CSVFILES/MergeSort/Random");
+        for (int i = 0; i < MsRCRuns.length; i++) {
+            MergeSortArrays(MsRCRuns[i], 3, "MergeSortRandomCase");
+        }
 
         int[][] CsBCRuns = makeRunSuite("CSVFILES/CountingSort/BestCase");
         for (int i = 0; i < CsBCRuns.length; i++) {
