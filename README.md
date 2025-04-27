@@ -4,8 +4,9 @@ Repository for group 14 Algorithms project code
 Run Instructions
 
 The first step is creating the sample input data for the sorting algorithms. This was done using a Python script that generates the data and saves it to multiple CSV files in different folders.
-There are various parameters in 
 To generate the files, run `csvgenerator.py` and ensure the resulting four directories are in the CSVFILES directory.
+The generated input data includes best, worst and random case data for all algorithms (Counting Sort has no random case.)
+There are various parameters in this script that can be used to control the number of files and the sizes of the inputs.
 
 Next, the energy monitoring must be set up.
 This works using another Python script that accesses RAPL through the pyRAPL library, which can be installed using the command `pip install pyrapl`.
