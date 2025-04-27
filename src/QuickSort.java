@@ -13,7 +13,7 @@ public class QuickSort {
 
     // Function to partition the array and return pivot index
     private static int partition(int[] arr, int low, int high) {
-        // Pivot is chosen as the last element of the array
+        // Random pivot
         int pivot = arr[low + (int)(Math.random() * (high - low + 1))];
         int i = low - 1; // Index of smaller element
 

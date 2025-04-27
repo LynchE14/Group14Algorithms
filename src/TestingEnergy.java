@@ -7,63 +7,97 @@ import java.util.Date;
 
 public class TestingEnergy {
 
+    // path to csv being written to by HWiNFO
     static String energyFilePath = "energyreadings.csv";
+    // path to file to output data from sorting to
     static File outputFile = new File("outputFile.csv");
 
     public static void main(String[] args) throws Exception {
+        // BubbleSort
+        // Best case
         int[][] BsBCRuns = makeRunSuite("CSVFILES/BubbleSort/BestCase");
-        for (int i = 0; i < BsBCRuns.length; i++) {
-            BubbleSortArrays(BsBCRuns[i], 50, "BubbleSortBestCase");
+        for (int[] bsBCRun : BsBCRuns) {
+            // 10 runs of each csv
+            BubbleSortArrays(bsBCRun, 10, "BubbleSortBestCase");
         }
+        // Worst case
         int[][] BsWCRuns = makeRunSuite("CSVFILES/BubbleSort/WorstCase");
-        for (int i = 0; i < BsWCRuns.length; i++) {
-            BubbleSortArrays(BsWCRuns[i], 50, "BubbleSortWorstCase");
+        for (int[] bsWCRun : BsWCRuns) {
+            // 10 runs of each csv
+            BubbleSortArrays(bsWCRun, 10, "BubbleSortWorstCase");
         }
+        // Random
         int[][] BsRCRuns = makeRunSuite("CSVFILES/BubbleSort/Random");
-        for (int i = 0; i < BsRCRuns.length; i++) {
-            BubbleSortArrays(BsRCRuns[i], 5, "BubbleSortRandomCase");
+        for (int[] bsRCRun : BsRCRuns) {
+            // 5 runs of each csv
+            BubbleSortArrays(bsRCRun, 5, "BubbleSortRandomCase");
         }
 
+        // MergeSort
+        // Best Case
         int[][] MsBCRuns = makeRunSuite("CSVFILES/MergeSort/BestCase");
-        for (int i = 0; i < MsBCRuns.length; i++) {
-            MergeSortArrays(MsBCRuns[i], 5, "MergeSortBestCase");
+        for (int[] msBCRun : MsBCRuns) {
+            // 5 runs of each csv
+            MergeSortArrays(msBCRun, 5, "MergeSortBestCase");
         }
+        // Worst Case
         int[][] MsWCRuns = makeRunSuite("CSVFILES/MergeSort/WorstCase");
-        for (int i = 0; i < MsWCRuns.length; i++) {
-            MergeSortArrays(MsWCRuns[i], 5, "MergeSortWorstCase");
+        for (int[] msWCRun : MsWCRuns) {
+            // 5 runs of each csv
+            MergeSortArrays(msWCRun, 5, "MergeSortWorstCase");
         }
+        // Random
         int[][] MsRCRuns = makeRunSuite("CSVFILES/MergeSort/Random");
-        for (int i = 0; i < MsRCRuns.length; i++) {
-            MergeSortArrays(MsRCRuns[i], 3, "MergeSortRandomCase");
+        for (int[] msRCRun : MsRCRuns) {
+            // 5 runs of each csv
+            MergeSortArrays(msRCRun, 3, "MergeSortRandomCase");
         }
 
+        // CountingSort
+        // Best Case
         int[][] CsBCRuns = makeRunSuite("CSVFILES/CountingSort/BestCase");
-        for (int i = 0; i < CsBCRuns.length; i++) {
-            CountingSortArrays(CsBCRuns[i], 5, "CountingSortBestCase", 10);
+        for (int[] csBCRun : CsBCRuns) {
+            // 5 runs of each csv
+            // k = 10
+            CountingSortArrays(csBCRun, 5, "CountingSortBestCase", 10);
         }
+        // Worst Case
         int[][] CsWCRuns = makeRunSuite("CSVFILES/CountingSort/WorstCase");
-        for (int i = 0; i < CsWCRuns.length; i++) {
-            CountingSortArrays(CsWCRuns[i], 5, "CountingSortWorstCase", 100000000);
+        for (int[] csWCRun : CsWCRuns) {
+            // 5 runs of each csv
+            // k = 10 million
+            CountingSortArrays(csWCRun, 5, "CountingSortWorstCase", 100000000);
         }
 
+        // QuickSort
+        // Best Case
         int[][] QsBCRuns = makeRunSuite("CSVFILES/QuickSort/BestCase");
-        for (int i = 0; i < QsBCRuns.length; i++) {
-            QuickSortArrays(QsBCRuns[i], 5, "QuickSortBestCase");
+        for (int[] qsBCRun : QsBCRuns) {
+            // 5 runs of each csv
+            QuickSortArrays(qsBCRun, 5, "QuickSortBestCase");
         }
+        // Worst Case
         int[][] QsWCRuns = makeRunSuite("CSVFILES/QuickSort/WorstCase");
-        for (int i = 0; i < QsWCRuns.length; i++) {
-            QuickSortArrays(QsWCRuns[i], 5, "QuickSortWorstCase");
+        for (int[] qsWCRun : QsWCRuns) {
+            // 5 runs of each csv
+            QuickSortArrays(qsWCRun, 5, "QuickSortWorstCase");
         }
+        // Random Case
         int[][] QsRCRuns = makeRunSuite("CSVFILES/QuickSort/Random");
-        for (int i = 0; i < QsRCRuns.length; i++) {
-            QuickSortArrays(QsRCRuns[i], 3, "QuickSortRandomCase");
+        for (int[] qsRCRun : QsRCRuns) {
+            // 5 runs of each csv
+            QuickSortArrays(qsRCRun, 3, "QuickSortRandomCase");
         }
     }
 
-    public static int[][] makeRunSuite(String folderPath){
+    // method combining below methods to create 3D int array to iterate through with sorting algorithm methods
+    public static int[][] makeRunSuite(String folderPath) {
+        // file array from chosen csv folder
         File[] files = makeFileArray(folderPath);
-        int [][] intArrays = new int[files.length][];
+        // 3D int array to return, contains every csv -> int array
+        int[][] intArrays = new int[files.length][];
         for (int i = 0; i < files.length; i++) {
+            // convert csv file to int array
             intArrays[i] = csvToIntArray(files[i]);
         }
 
@@ -72,38 +106,49 @@ public class TestingEnergy {
 
     // returns array of files to be iterated through
     public static File[] makeFileArray(String folderPath) {
+        // find folder from given path
         File folder = new File(folderPath);
 
         // Check if the folder exists and is a directory
         if (folder.exists() && folder.isDirectory()) {
             // return file array
-            return folder.listFiles((dir, name) -> name.endsWith(".csv"));
+            return folder.listFiles((_, name) -> name.endsWith(".csv"));
         } else {
             System.out.println("Folder not found!");
             return null;
         }
     }
 
+    // method to convert comma seperated csv file full of ints to int array
     public static int[] csvToIntArray(File file) {
+        // using list so number of ints in csv file not needed to be known
         List<Integer> numbersList = new ArrayList<>();
 
+        // open csv file for reading using BufferedReader
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            // read each line from the file as a Stream
             br.lines()
+                    // split each line into an array, then flatten to stream of values
                     .flatMap(line -> Arrays.stream(line.split(",")))
+                    // remove any whitespace from value
                     .map(String::trim)
+                    // convert each string to integer
                     .mapToInt(Integer::parseInt)
+                    // add each integer numbersList
                     .forEach(numbersList::add);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+
+        // return list converted to int array
         return numbersList.stream().mapToInt(Integer::intValue).toArray();
     }
 
-    // write data for each sort to csv file
-    public static void outputData(double timeTaken, double energyConsumed,int size, String nameOfRun, File file) {
+    // write data for each sort run to csv file
+    public static void outputData(double timeTaken, double energyConsumed, int size, String nameOfRun, File file) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
-            // Format: timeTaken,energyConsumed,nameOfRun
+            // output time taken, energy consumed, info about run
             writer.write(timeTaken + "," + energyConsumed + "," + size + "," + nameOfRun);
             writer.newLine(); // Move to the next line
         } catch (IOException e) {
@@ -111,77 +156,67 @@ public class TestingEnergy {
         }
     }
 
+    public static void endOfSort(int i, int[] arrayToBeSorted, String startTimeStr, String run) throws InterruptedException, IOException {
+        // Record end time in same format
+        String endTimeStr = getCurrentTimeFormatted();
+        System.out.println("Array [" + i + "] sorted for size: " + arrayToBeSorted.length);
+
+        // calculate energy consumed
+        double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
+        // output data to output csv file
+        outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, arrayToBeSorted.length, run + " - " + i, outputFile);
+        // Add a delay between tests to ensure distinct time ranges
+        Thread.sleep(75);
+    }
+
     public static void BubbleSortArrays(int[] array, int runs, String run) throws IOException, InterruptedException {
         // create instance of sort class
         BubbleSort b = new BubbleSort();
         // iterate through arrays
         for (int i = 0; i < runs; i++) {
+            // create array to be sorted
             int[] arrayToBeSorted = new int[array.length];
+            // create deep copy
             System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
             b.bubbleSort(arrayToBeSorted);
             // Record end time in same format
-            String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array [" + i + "] sorted for size: " + arrayToBeSorted.length);
-
-            // calculate energy consumed
-            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
-            // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
-            // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(75);
+            endOfSort(i, arrayToBeSorted, startTimeStr, run);
         }
     }
 
     public static void MergeSortArrays(int[] array, int runs, String run) throws IOException, InterruptedException {
-        // create instance of sort class
-        MergeSort m = new MergeSort();
         // iterate through arrays
         for (int i = 0; i < runs; i++) {
+            // create array to be sorted
             int[] arrayToBeSorted = new int[array.length];
+            // create deep copy
             System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
-            m.mergeSort(arrayToBeSorted);
+            MergeSort.mergeSort(arrayToBeSorted);
             // Record end time in same format
-            String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array [" + i + "] sorted: " + run);
-
-            // calculate energy consumed
-            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
-            // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
-
-            // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(75);
+            endOfSort(i, arrayToBeSorted, startTimeStr, run);
         }
     }
 
     public static void QuickSortArrays(int[] array, int runs, String run) throws IOException, InterruptedException {
-        // create instance of sort class
-        QuickSort q = new QuickSort();
+
         // iterate through arrays
         for (int i = 0; i < runs; i++) {
+            // create array to be sorted
             int[] arrayToBeSorted = new int[array.length];
+            // create deep copy
             System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
-            q.quickSort(arrayToBeSorted, 0, array.length - 1);
+            QuickSort.quickSort(arrayToBeSorted, 0, array.length - 1);
             // Record end time in same format
-            String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array [" + i + "] sorted: " + run);
-
-            // calculate energy consumed
-            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
-            // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
-
-            // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(75);
+            endOfSort(i, arrayToBeSorted, startTimeStr, run);
         }
     }
 
@@ -190,23 +225,16 @@ public class TestingEnergy {
         CountingSort c = new CountingSort();
         // iterate through arrays
         for (int i = 0; i < runs; i++) {
+            // create array to be sorted
             int[] arrayToBeSorted = new int[array.length];
+            // create deep copy
             System.arraycopy(array, 0, arrayToBeSorted, 0, array.length);
             // Format the current time as HH:mm:ss.SSS to match CSV format
             String startTimeStr = getCurrentTimeFormatted();
             // sort
             c.CountingSort(arrayToBeSorted, k);
             // Record end time in same format
-            String endTimeStr = getCurrentTimeFormatted();
-            System.out.println("Array [" + i + "] sorted: " + run);
-
-            // calculate energy consumed
-            double energyConsumed = estimateEnergy(energyFilePath, startTimeStr, endTimeStr);
-            // output data to output csv file
-            outputData((timeStrToMillisSinceMidnight(endTimeStr) - timeStrToMillisSinceMidnight(startTimeStr)), energyConsumed, array.length, run + " - " + i, outputFile);
-
-            // Add a delay between tests to ensure distinct time ranges
-            Thread.sleep(75);
+            endOfSort(i, arrayToBeSorted, startTimeStr, run);
         }
     }
 
@@ -216,24 +244,30 @@ public class TestingEnergy {
         return sdf.format(new Date());
     }
 
+    // Parse CSV file into list of string arrays
     public static List<String[]> parseCsvWithQuotes(String filePath) {
+        // List to hold all rows
         List<String[]> rows = new ArrayList<>();
 
+        // Open file for reading using BufferedReader
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = br.readLine()) != null) {
-                // Use regular expression to handle commas inside quoted fields
+                // Split line into columns, handling commas inside quotes
                 String[] columns = line.split("(?<!\"),");
                 for (int i = 0; i < columns.length; i++) {
-                    // Remove quotes around the fields
+                    // Remove surrounding quotes from each field
                     columns[i] = columns[i].replaceAll("^\"|\"$", "");
                 }
+                // Add processed row to list
                 rows.add(columns);
             }
         } catch (IOException e) {
+            // Print stack trace on error
             e.printStackTrace();
         }
 
+        // Return list of rows
         return rows;
     }
 
@@ -244,34 +278,42 @@ public class TestingEnergy {
             throw new IllegalArgumentException("CSV path cannot be null or empty");
         }
 
-        // Convert input times to milliseconds since midnight for comparison
+        // convert start and end times to milliseconds
         long startMillis = timeStrToMillisSinceMidnight(startTimeStr);
         long endMillis = timeStrToMillisSinceMidnight(endTimeStr);
 
-        // No point processing if time range is invalid
+        // time range invalid
         if (endMillis < startMillis) {
             throw new IllegalArgumentException("End time must be after start time");
         }
 
+        // convert energyreadings.csv to list of strings representing rows
         List<String[]> rows = parseCsvWithQuotes(csvPath);
 
+        // empty csv file
         if (rows.isEmpty()) {
             throw new IOException("CSV file is empty");
         }
 
+        // time is 2nd column in csv
         int timeIndex = 1;
+        // power is 3rd column in csv
         int powerIndex = 2;
 
+        // accumulative energy counter
         double totalEnergy = 0;
+        // timestamp kept in memory for interpolation
         long prevTimestamp = -1;
+        // power kept in memory for interpolation
         double prevPower = 0;
         boolean foundFirstPointInRange = false;
-        int pointsInRange = 0;
 
         // Process each data row (skipping header)
         for (int i = 1; i < rows.size(); i++) {
             try {
+                // Extract timestamp string from row
                 String timeStr = rows.get(i)[timeIndex];
+                // Skip row if timestamp is empty
                 if (timeStr.isEmpty()) {
                     System.err.println("Skipping line " + i + ": empty timestamp");
                     continue;
@@ -282,106 +324,114 @@ public class TestingEnergy {
 
                 // Three possible cases: before range, in range, after range
                 if (timestamp < startMillis) {
-                    // Before our range - just remember this point for possible interpolation
+                    // Before start of target range - store value for possible interpolation
                     prevTimestamp = timestamp;
                     try {
+                        // Parse power value for interpolation
                         prevPower = Double.parseDouble(rows.get(i)[powerIndex]);
                     } catch (NumberFormatException e) {
+                        // Handle invalid power value
                         prevPower = 0;
                         System.err.println("Invalid power value at line " + i + ": " + rows.get(i)[powerIndex]);
                     }
+
                 } else if (timestamp <= endMillis) {
-                    // Within our range - this is data we care about
-                    pointsInRange++;
+                    // Timestamp within target range - process data
                     double power;
                     try {
+                        // Parse power value
                         power = Double.parseDouble(rows.get(i)[powerIndex]);
                     } catch (NumberFormatException e) {
+                        // Skip invalid data
                         System.err.println("Skipping line " + i + ": invalid power value: " + rows.get(i)[powerIndex]);
                         continue;
                     }
 
-                    // Special handling for the first point we encounter within our range
+                    // Handle first data point in range
                     if (!foundFirstPointInRange) {
                         foundFirstPointInRange = true;
 
-                        // If we have a point before the range, we can interpolate exactly at the start boundary
+                        // If previous point exists, interpolate at start boundary
                         if (prevTimestamp != -1 && prevTimestamp < startMillis) {
-                            // Simple linear interpolation between the previous point and current point
+                            // Linear interpolation of power at startMillis
                             double ratio = (double) (startMillis - prevTimestamp) / (timestamp - prevTimestamp);
                             double interpolatedPower = prevPower + ratio * (power - prevPower);
-
-                            // Use this interpolated value as our starting point
+                            // Use interpolated value as starting point
                             prevTimestamp = startMillis;
                             prevPower = interpolatedPower;
                         } else {
-                            // No previous point to interpolate with, just use this one
+                            // No previous point, use current point as starting reference
                             prevTimestamp = timestamp;
                             prevPower = power;
                         }
                     } else {
-                        // Not the first point - calculate energy between previous point and this one
+                        // Calculate energy between previous and current point
                         double deltaTimeSec = (timestamp - prevTimestamp) / 1000.0;
-                        if (deltaTimeSec > 0) {  // Make sure time isn't going backwards (bad data)
-                            // Energy = Power × Time (constant power approximation)
+                        if (deltaTimeSec > 0) {
+                            // Energy = Power × Time
                             double energySegment = prevPower * deltaTimeSec;
                             totalEnergy += energySegment;
+                            // Update previous point values
                             prevTimestamp = timestamp;
                             prevPower = power;
                         } else {
+                            // Handle non-increasing timestamp (invalid data)
                             System.err.println("Warning: Non-increasing timestamps at line " + i);
                         }
                     }
+
                 } else {
-                    // After our range - we can stop processing, but first handle the boundary
-                    // If we have a previous point and it's within our range, calculate energy to the end boundary
+                    // After target range - finalize calculation and stop processing
                     if (prevTimestamp != -1 && prevTimestamp <= endMillis) {
                         try {
-                            double power = Double.parseDouble(rows.get(i)[powerIndex]);
-                            // Interpolate power at end boundary
-                            double ratio = (double) (endMillis - prevTimestamp) / (timestamp - prevTimestamp);
-                            double interpolatedPower = prevPower + ratio * (power - prevPower);
-
+                            // Linear interpolation of power at endMillis
                             // Calculate energy from last point to end boundary
                             double deltaTimeSec = (endMillis - prevTimestamp) / 1000.0;
                             double energySegment = prevPower * deltaTimeSec;
                             totalEnergy += energySegment;
                         } catch (NumberFormatException e) {
+                            // Handle invalid power value
                             System.err.println("Invalid power value at line " + i + ": " + rows.get(i)[powerIndex]);
                         }
                     }
-                    break; // No need to process more data beyond our range
+                    // Exit loop after range
+                    break;
                 }
             } catch (Exception e) {
+                // Catch and report unexpected errors
                 System.err.println("Error processing line " + i + ": " + e.getMessage());
             }
         }
-        return totalEnergy; // in Joules
+// Return total energy calculated within range (in Joules)
+        return totalEnergy;
     }
 
-    // Convert HH:mm:ss.SSS to milliseconds since midnight
+    /**
+     * Convert timestamp string (HH:mm:ss.SSS) to milliseconds since midnight
+     */
     private static long timeStrToMillisSinceMidnight(String timeStr) throws NumberFormatException {
-        // Break the time string into hours, minutes, seconds, and milliseconds
-        String[] parts = timeStr.split("[:\\.]");
+        // Split string into hours, minutes, seconds, milliseconds
+        String[] parts = timeStr.split("[:.]");
         if (parts.length != 4) {
             throw new NumberFormatException("Invalid time format: " + timeStr + ", expected HH:mm:ss.fff");
         }
 
         try {
-            // Convert each part to an integer
+            // Parse string parts into integers
             int h = Integer.parseInt(parts[0]);
             int m = Integer.parseInt(parts[1]);
             int s = Integer.parseInt(parts[2]);
             int ms = Integer.parseInt(parts[3]);
 
-            // Make sure values are in reasonable ranges
+            // Validate value ranges
             if (h < 0 || h > 23 || m < 0 || m > 59 || s < 0 || s > 59 || ms < 0 || ms > 999) {
                 throw new NumberFormatException("Time values out of range: " + timeStr);
             }
 
-            // Convert to milliseconds since midnight
+            // Return total milliseconds since midnight
             return ((h * 60L + m) * 60L + s) * 1000L + ms;
         } catch (NumberFormatException e) {
+            // Rethrow with original input for context
             throw new NumberFormatException("Invalid time format: " + timeStr + " - " + e.getMessage());
         }
     }
